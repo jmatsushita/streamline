@@ -1,9 +1,7 @@
--- https://github.com/haskell-gi/haskell-gi/blob/master/examples/advanced/GstHelloWorld.hs
--- in the Declarative Gtk+ style of https://wickstrom.tech/programming/2018/09/04/declarative-gtk-programming-with-haskell.html
 
 {-# LANGUAGE OverloadedLabels  #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Main where
+module Engine where
 
 -- This is a translation of the Hello World gstreamer example to haskell
 -- Original C source:
@@ -21,25 +19,25 @@ import Control.Monad (void, when)
 import System.Environment
 import System.IO (stderr)
 import System.Exit (exitFailure)
-import Data.Text (pack, unpack)
+import Data.Text (pack, unpack, Text)
 import qualified Data.Text.IO as T
 import Data.Maybe (fromMaybe)
 
--- busCall :: GLib.MainLoop -> Gst.Bus -> Gst.Message -> IO Bool
--- busCall loop _bus message = do
---   messageTypes <- Gst.getMessageType message
+busCall :: GLib.MainLoop -> Gst.Bus -> Gst.Message -> IO Bool
+busCall loop _bus message = do
+  messageTypes <- Gst.getMessageType message
 
---   when (Gst.MessageTypeEos `elem` messageTypes) $ do
---     putStrLn "End of stream"
---     GLib.mainLoopQuit loop
+  when (Gst.MessageTypeEos `elem` messageTypes) $ do
+    putStrLn "End of stream"
+    GLib.mainLoopQuit loop
 
---   when (Gst.MessageTypeError `elem` messageTypes) $ do
---     (gerror,_debug) <- Gst.messageParseError message
---     T.hPutStrLn stderr . ("Error: " <>) =<< Gst.gerrorMessage gerror
---     T.hPutStrLn stderr _debug
---     GLib.mainLoopQuit loop
+  when (Gst.MessageTypeError `elem` messageTypes) $ do
+    (gerror,_debug) <- Gst.messageParseError message
+    T.hPutStrLn stderr . ("Error: " <>) =<< Gst.gerrorMessage gerror
+    T.hPutStrLn stderr _debug
+    GLib.mainLoopQuit loop
 
---   return True
+  return True
 
 -- onPadAdded :: Gst.Element -> Gst.Pad -> IO ()
 -- onPadAdded decoder pad = do
@@ -48,33 +46,28 @@ import Data.Maybe (fromMaybe)
 --   Just sinkPad <- Gst.elementGetStaticPad decoder "sink"
 --   void $ Gst.padLink pad sinkPad
 
-main :: IO ()
-main = do
-  progName <- getProgName
-  args <- getArgs
+
+gstreamer :: [String] -> IO ()
+gstreamer args = do
 
   -- Initialization
   void $ Gst.init Nothing
+  let filename = head args
 
   loop <- GLib.mainLoopNew Nothing False
 
-  -- Check input arguments
-  when (length args /= 1) $ do
-    T.hPutStrLn stderr $ "Usage: " <> pack progName <> " <Video filename>"
-    exitFailure
-  let filename = head args
 
   -- Crate gstreamer elements
-  pipeline <- Gst.pipelineNew (Just "video-player")
+  pipeline <- Gst.pipelineNew (Just $ pack "video-player")
 
   let makeElement factoryname name =
-        fromMaybe (error $ unpack $ "Could not create " <> name)
+        fromMaybe (error $ unpack $ pack "Could not create " <> name)
         <$> Gst.elementFactoryMake factoryname (Just name)
 
-  source  <- makeElement "filesrc"       "file-source"
-  decode  <- makeElement "decodebin3"    "decoder"
-  conv    <- makeElement "videoconvert"  "converter"
-  sink    <- makeElement "autovideosink" "audio-output"
+  source  <- makeElement (pack "filesrc") (pack "file-source")
+  decode  <- makeElement (pack "decodebin3") (pack "decoder")
+  conv    <- makeElement (pack "videoconvert") (pack "converter")
+  sink    <- makeElement (pack "autovideosink") (pack "videosink")
 
   -- Set up the pipeline
 
@@ -82,8 +75,8 @@ main = do
   setObjectPropertyString source "location" (Just $ pack filename)
 
   -- we add a message handler
-  -- bus <- Gst.pipelineGetBus pipeline
-  -- busWatchId <- Gst.busAddWatch bus GLib.PRIORITY_DEFAULT (busCall loop)
+  bus <- Gst.pipelineGetBus pipeline
+  busWatchId <- Gst.busAddWatch bus GLib.PRIORITY_DEFAULT (busCall loop)
 
   -- we add all elements into the pipeline
   -- file-source | ogg-demuxer | vorbis-decoder | converter | alsa-output

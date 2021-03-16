@@ -19,19 +19,21 @@ extra-source-files:  CHANGELOG.md
 
 executable streamline
   main-is:             Main.hs
-  -- other-modules:
+  other-modules:       Model
+                       Engine
   -- other-extensions:
   build-depends:       base >=4.13 && <5,
                        haskell-gi-base ^>= 0.24.0,
                        gi-glib,
                        gi-gst,
-                       text  
-  -- hs-source-dirs:
+                       text,
+                       haskus-utils-variant >= 3.0
+  hs-source-dirs:      src
   default-language:    Haskell2010
-  pkgconfig-depends:   gstreamer-1.0,
-                      --  gstreamer-devtools-1.0,
-                       gstreamer-plugins-base-1.0,
-                      --  gstreamer-plugins-ugly-1.0,
-                      --  gstreamer-plugins-good-1.0,
-                      --  gstreamer-libav-1.0,
-                       gstreamer-plugins-bad-1.0
+  -- pkgconfig-depends:   gstreamer-1.0,
+  --                      gstreamer-devtools-1.0,
+  --                      gstreamer-plugins-base-1.0,
+  --                      gstreamer-plugins-bad-1.0,
+  --                      gstreamer-plugins-good-1.0,
+  --                      gstreamer-plugins-ugly-1.0,
+  --                      gst-libav
