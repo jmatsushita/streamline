@@ -21,8 +21,16 @@
                   [ cudatoolkit_10_2 ];
                 # packages.cuda.components.library.pkgconfig = with pkgs; lib.mkForce 
                 #  [ [ cudatoolkit_10_2 ] ];
-                packages.streamline.components.library.libs = with pkgs; lib.mkForce 
-                  [ gst_all_1.gstreamer gst_all_1.gst-devtools gst_all_1.gst-plugins-base gst_all_1.gst-plugins-bad pkgs.gst_all_1.gst-plugins-good gst_all_1.gst-plugins-ugly gst_all_1.gst-libav];
+                packages.streamline.components.library.libs = with pkgs; lib.mkForce [ 
+                  gst_all_1.gstreamer 
+                  gst_all_1.gst-devtools 
+                  gst_all_1.gst-plugins-base 
+                  gst_all_1.gst-plugins-bad 
+                  gst_all_1.gst-plugins-good 
+                  gst_all_1.gst-plugins-ugly 
+                  gst_all_1.gst-libav
+                  gst_all_1.gst-editing-services
+                ];
               }];
             };
           # Maps haskell library names to nixpkgs library names
@@ -54,6 +62,14 @@
             hlint = "latest";
             haskell-language-server = "latest";
           };
+        };
+        apps.repl = flake-utils.lib.mkApp {
+          drv = pkgs.writeShellScriptBin "repl" ''
+            confnix=$(mktemp)
+            echo "builtins.getFlake (toString $(git rev-parse --show-toplevel))" >$confnix
+            trap "rm $confnix" EXIT
+            nix repl $confnix
+          '';
         };
       });
 }

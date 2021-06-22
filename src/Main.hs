@@ -32,21 +32,26 @@ import Data.Maybe (fromMaybe)
 
 import Engine (gstreamer)
 import Model (extract, seek, pos, peeks, matrix1)
+import Design
+import HHCPS
+import HHFreeArrow
 
 main :: IO ()
 main = do
-  progName <- getProgName
-  args <- getArgs
+  hhmain
+  -- design
+  -- progName <- getProgName
+  -- args <- getArgs
 
-  -- putStrLn . unpack $ extract $ seek (1,0) $ pos (0,1) matrix1
-  -- putStrLn . unpack $ peeks (\(a,b) -> (b,a)) $ pos (0,1) matrix1
+  -- -- putStrLn . unpack $ extract $ seek (1,0) $ pos (0,1) matrix1
+  -- -- putStrLn . unpack $ peeks (\(a,b) -> (b,a)) $ pos (0,1) matrix1
 
-  -- Check input arguments
-  when (length args /= 1) $ do
-    T.hPutStrLn stderr $ pack "Usage: " <> pack progName <> pack " <Video filename>"
-    exitFailure
+  -- -- Check input arguments
+  -- when (length args /= 1) $ do
+  --   T.hPutStrLn stderr $ pack "Usage: " <> pack progName <> pack " <Video filename>"
+  --   exitFailure
 
-  -- putStrLn $ show $ ((extract routing) :: Outputs)
-  -- putStrLn $ show $ (Nil :: Outputs)
+  -- -- putStrLn $ show $ ((extract routing) :: Outputs)
+  -- -- putStrLn $ show $ (Nil :: Outputs)
 
-  gstreamer args 
+  -- gstreamer args 

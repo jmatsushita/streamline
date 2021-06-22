@@ -17,17 +17,30 @@ license-file:        LICENSE
 build-type:          Simple
 extra-source-files:  CHANGELOG.md
 
+-- library gi-gst-declarative
+
+
 executable streamline
   main-is:             Main.hs
   other-modules:       Model
                        Engine
+                       Design
+                       FreeArrows
+                       HHCPS
+                       HHFreeArrow
+                       GI.Gst.Declarative
+
   -- other-extensions:
   build-depends:       base >=4.13 && <5,
                        haskell-gi-base ^>= 0.24.0,
                        gi-glib,
                        gi-gst,
                        text,
-                       haskus-utils-variant >= 3.0
+                       haskus-utils-variant >= 3.0,
+                       array,
+                       graphs,
+                       profunctors,
+                       free-functors
   hs-source-dirs:      src
   default-language:    Haskell2010
   -- pkgconfig-depends:   gstreamer-1.0,
@@ -37,3 +50,4 @@ executable streamline
   --                      gstreamer-plugins-good-1.0,
   --                      gstreamer-plugins-ugly-1.0,
   --                      gst-libav
+  ghc-options:         -threaded -rtsopts -Wall
