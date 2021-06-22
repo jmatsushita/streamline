@@ -1,8 +1,14 @@
 # Streamline
 
-Experiments on streaming tools with Haskell.
+Experiments on streaming tools with Haskell. 
+
+The idea is to have a declarative interface to the underlying graph of GStreamer's pipelines in order to modify running pipelines (including GES timelines) to reproduce OBS/NLE features in a more modular and dynamic way.
 
 > Developing on Twitch. Youtube playlist of past streams: https://www.youtube.com/playlist?list=PLyz2muULdPoMkV7QI7tEzNS_Gxe0a4gFE
+
+## Usage
+
+Enter the `nix develop` shell, then run with a video file which will pass it to a simple `"filesrc" "decodebin" "videoconvert" "autovideosink"` GStreamer pipeline running in Haskell.
 
 ```bash
 $ nix develop
